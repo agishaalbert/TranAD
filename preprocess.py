@@ -6,6 +6,14 @@ import pickle
 import json
 from src.folderconstants import *
 from shutil import copyfile
+# Check if MSDS is in the root directory and move it if necessary
+if os.path.exists('/content/MSDS') and not os.path.exists('data/MSDS'):
+    import shutil
+    os.makedirs('data/MSDS', exist_ok=True)
+    for file in os.listdir('/content/MSDS'):
+        shutil.move(os.path.join('/content/MSDS', file), os.path.join('data/MSDS', file))
+    print("Moved MSDS folder to data directory")
+
 
 datasets = ['synthetic', 'SMD', 'SWaT', 'SMAP', 'MSL', 'WADI', 'MSDS', 'UCR', 'MBA', 'NAB']
 
