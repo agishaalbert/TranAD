@@ -370,7 +370,7 @@ class TranAD_Basic(nn.Module):
 	def forward(self, src, tgt):
 		src = src * math.sqrt(self.n_feats)
 		src = self.pos_encoder(src)
-		memory = self.transformer_encoder(src)
+		memory = self.transformer_encoder(src, mask=None, src_key_padding_mask=None)
 		x = self.transformer_decoder(tgt, memory)
 		x = self.fcn(x)
 		return x
