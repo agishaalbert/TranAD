@@ -113,18 +113,49 @@ def load_data(dataset):
 			fn = filename.replace('.csv', '')
 			for file in ['train', 'test', 'labels']:
 				np.save(os.path.join(folder, f'{fn}_{file}.npy'), eval(file))
+	# elif dataset == 'MSDS':
+	# 	dataset_folder = 'data/MSDS'
+	# 	df_train = pd.read_csv(os.path.join(dataset_folder, 'train.csv'))
+	# 	df_test  = pd.read_csv(os.path.join(dataset_folder, 'test.csv'))
+	# 	df_train, df_test = df_train.values[::5, 1:], df_test.values[::5, 1:]
+	# 	_, min_a, max_a = normalize3(np.concatenate((df_train, df_test), axis=0))
+	# 	train, _, _ = normalize3(df_train, min_a, max_a)
+	# 	test, _, _ = normalize3(df_test, min_a, max_a)
+	# 	labels = pd.read_csv(os.path.join(dataset_folder, 'labels.csv'))
+	# 	labels = labels.values[::1, 1:]
+	# 	for file in ['train', 'test', 'labels']:
+	# 		np.save(os.path.join(folder, f'{file}.npy'), eval(file).astype('float64'))
 	elif dataset == 'MSDS':
-		dataset_folder = 'data/MSDS'
-		df_train = pd.read_csv(os.path.join(dataset_folder, 'train.csv'))
-		df_test  = pd.read_csv(os.path.join(dataset_folder, 'test.csv'))
-		df_train, df_test = df_train.values[::5, 1:], df_test.values[::5, 1:]
-		_, min_a, max_a = normalize3(np.concatenate((df_train, df_test), axis=0))
-		train, _, _ = normalize3(df_train, min_a, max_a)
-		test, _, _ = normalize3(df_test, min_a, max_a)
-		labels = pd.read_csv(os.path.join(dataset_folder, 'labels.csv'))
-		labels = labels.values[::1, 1:]
-		for file in ['train', 'test', 'labels']:
-			np.save(os.path.join(folder, f'{file}.npy'), eval(file).astype('float64'))
+	    dataset_folder = 'data/MSDS'
+	    train_file = os.path.join(dataset_folder, 'train.csv')
+	    test_file = os.path.join(dataset_folder, 'test.csv')
+	    labels_file = os.path.join(dataset_folder, 'labels.csv')
+	
+	    if not all(os.path.exists(f) for f in [train_file, test_file, labels_file]):
+	        print(f"Warning: Required files not found in {dataset_folder}. Skipping MSDS dataset.")
+	        return
+	
+	    try:
+	        df_train = pd.read_csv(train_file)
+	        df_test = pd.read_csv(test_file)
+	        labels = pd.read_csv(labels_file)
+	    except Exception as e:
+	        print(f"Error reading CSV files for MSDS dataset: {str(e)}")
+	        return
+	
+	    df_train, df_test = df_train.values[::5, 1:], df_test.values[::5, 1:]
+	    _, min_a, max_a = normalize3(np.concatenate((df_train, df_test), axis=0))
+	    train, _, _ = normalize3(df_train, min_a, max_a)
+	    test, _, _ = normalize3(df_test, min_a, max_a)
+	    labels = labels.values[::1, 1:]
+	
+	    for file in ['train', 'test', 'labels']:
+	        try:
+	            np.save(os.path.join(folder, f'{file}.npy'), eval(file).astype('float64'))
+	        except Exception as e:
+	            print(f"Error saving {file}.npy: {str(e)}")
+	
+	    print(f"MSDS dataset processed successfully.")
 	elif dataset == 'SWaT':
 		dataset_folder = 'data/SWaT'
 		file = os.path.join(dataset_folder, 'series.json')
