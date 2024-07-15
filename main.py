@@ -13,6 +13,9 @@ from torch.utils.data import Dataset, DataLoader, TensorDataset
 import torch.nn as nn
 from time import time
 from pprint import pprint
+import matplotlib
+matplotlib.use('Agg')  # Use a non-interactive backend
+matplotlib.rcParams['font.family'] = 'DejaVu Sans'
 # from beepy import beep
 
 def convert_to_windows(data, model):
@@ -332,7 +335,7 @@ if __name__ == '__main__':
 	for i in range(loss.shape[1]):
 		lt, l, ls = lossT[:, i], loss[:, i], labels[:, i]
 		result, pred = pot_eval(lt, l, ls); preds.append(pred)
-		df = df.append(result, ignore_index=True)
+		df = pd.concat([df,pd.DataFrame([result])], ignore_index=True)
 	# preds = np.concatenate([i.reshape(-1, 1) + 0 for i in preds], axis=1)
 	# pd.DataFrame(preds, columns=[str(i) for i in range(10)]).to_csv('labels.csv')
 	lossTfinal, lossFinal = np.mean(lossT, axis=1), np.mean(loss, axis=1)
